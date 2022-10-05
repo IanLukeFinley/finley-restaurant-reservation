@@ -92,4 +92,4 @@ module.exports = {
   createReservation,
   createTable,
   seatReservation,
-};
+}

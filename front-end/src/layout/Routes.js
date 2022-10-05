@@ -6,7 +6,7 @@ import NotFound from "./NotFound";
 import { today } from "../utils/date-time";
 import useQuery from "../utils/useQuery";
 import Reservations from "../reservations/Reservations";
-import Tables from "../table/Tables";
+import Tables from "../tables/Tables";
 import Seat from "../seat/Seat";
 import Search from "../search/Search";
 import Edit from "../reservations/Edit";
