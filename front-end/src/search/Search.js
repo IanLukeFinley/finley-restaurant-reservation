@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { listReservations } from "../utils/api";
-import ReservationTable from "../dashboard/reservationTable/ReservationTable";
+import ReservationTable from "../dashboard/reservationDisplay/ReservationTable";
 import ErrorAlert from "../layout/ErrorAlert";
 
 export default function Search() {

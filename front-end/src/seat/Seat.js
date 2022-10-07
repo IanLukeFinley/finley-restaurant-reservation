@@ -12,27 +12,27 @@ export default function Seat() {
 
   useEffect(() => {
     async function loadTables() {
-      const c = new AbortController();
+      const ac = new AbortController();
       setError(null);
       try {
-        const response = await listTables(c.signal);
+        const response = await listTables(ac.signal);
         setTables((prev) => response);
       } catch (error) {
         setError(error);
       }
-      return () => c.abort();
+      return () => ac.abort();
     }
     loadTables();
   }, [reservation_id]);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    const c = new AbortController();
+  async function handleSubmit(element) {
+    element.preventDefault();
+    const ac = new AbortController();
     try {
       const response = await seatReservation(
         seatTable,
         reservation_id,
-        c.signal
+        ac.signal
       );
       if (response) {
         history.push(`/dashboard`);
@@ -40,15 +40,15 @@ export default function Seat() {
     } catch (error) {
       setError(error);
     }
-    return () => c.abort();
+    return () => ac.abort();
   }
 
   function handleCancel() {
     history.goBack();
   }
 
-  function handleSelectTable(e) {
-    setSeatTable(e.target.value);
+  function tableSelector(element) {
+    setSeatTable(element.target.value);
   }
 
   const options = tables.map((table) => (
@@ -61,7 +61,7 @@ export default function Seat() {
   return (
     <>
       <div className="d-flex justify-content-center pt-3">
-        <h3>Select Table for Reservation</h3>
+        <h3>Select a table for your reservation:</h3>
       </div>
       <ErrorAlert error={error} />
       <form onSubmit={handleSubmit} className="d-flex justify-content-center">
@@ -70,7 +70,7 @@ export default function Seat() {
           <select
             id="table_id"
             name="table_id"
-            onChange={handleSelectTable}
+            onChange={tableSelector}
             className="mr-1"
             required
           >

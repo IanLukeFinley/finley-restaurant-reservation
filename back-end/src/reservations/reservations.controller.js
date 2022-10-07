@@ -1,7 +1,7 @@
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const service = require("./reservations.service");
 
-const VALID_RESERVATION_FIELDS = [
+const RESERVATION_FIELDS = [
   "first_name",
   "last_name",
   "mobile_number",
@@ -10,7 +10,7 @@ const VALID_RESERVATION_FIELDS = [
   "people",
 ];
 
-//helper function for validation
+
 function _validateTime(str) {
   const [hour, minute] = str.split(":");
 
@@ -26,15 +26,15 @@ function _validateTime(str) {
   return true;
 }
 
-//validation middleware
-function isValidReservation(req, res, next) {
+
+function reservationValid(req, res, next) {
   const reservation = req.body.data;
 
   if (!reservation) {
     return next({ status: 400, message: `Must have data property.` });
   }
 
-  VALID_RESERVATION_FIELDS.forEach((field) => {
+  RESERVATION_FIELDS.forEach((field) => {
     if (!reservation[field]) {
       return next({ status: 400, message: `${field} field required` });
     }
@@ -60,7 +60,7 @@ function isValidReservation(req, res, next) {
   next();
 }
 
-function isNotOnTuesday(req, res, next) {
+function notTuesday(req, res, next) {
   const { reservation_date } = req.body.data;
   const [year, month, day] = reservation_date.split("-");
   const date = new Date(`${month} ${day}, ${year}`);
@@ -71,7 +71,7 @@ function isNotOnTuesday(req, res, next) {
   next();
 }
 
-function isInTheFuture(req, res, next) {
+function futureDate(req, res, next) {
   const date = res.locals.date;
   const today = new Date();
   if (date < today) {
@@ -80,7 +80,7 @@ function isInTheFuture(req, res, next) {
   next();
 }
 
-function isWithinOpenHours(req, res, next) {
+function restaurantOpen(req, res, next) {
   const reservation = req.body.data;
   const [hour, minute] = reservation.reservation_time.split(":");
   if (hour < 10 || hour > 21) {
@@ -98,7 +98,7 @@ function isWithinOpenHours(req, res, next) {
   next();
 }
 
-function hasBookedStatus(req, res, next) {
+function statusBooked(req, res, next) {
   const { status } = res.locals.reservation
     ? res.locals.reservation
     : req.body.data;
@@ -111,7 +111,7 @@ function hasBookedStatus(req, res, next) {
   next();
 }
 
-function isValidStatus(req, res, next) {
+function statusValid(req, res, next) {
   const VALID_STATUSES = ["booked", "seated", "finished", "cancelled"];
   const { status } = req.body.data;
   if (!VALID_STATUSES.includes(status)) {
@@ -120,7 +120,7 @@ function isValidStatus(req, res, next) {
   next();
 }
 
-function isAlreadyFinished(req, res, next) {
+function statusFinished(req, res, next) {
   const { status } = res.locals.reservation;
   if (status === "finished") {
     return next({
@@ -145,7 +145,7 @@ const reservationExists = async (req, res, next) => {
   });
 };
 
-//CRUD
+//CRUDL
 async function list(req, res) {
   const { date, mobile_number } = req.query;
   let reservations;
@@ -189,27 +189,27 @@ async function modify(req, res, next) {
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [
-    asyncErrorBoundary(isValidReservation),
-    isNotOnTuesday,
-    isInTheFuture,
-    isWithinOpenHours,
-    hasBookedStatus,
+    asyncErrorBoundary(reservationValid),
+    notTuesday,
+    futureDate,
+    restaurantOpen,
+    statusBooked,
     asyncErrorBoundary(create),
   ],
   read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
   update: [
     asyncErrorBoundary(reservationExists),
-    isValidStatus,
-    isAlreadyFinished,
+    statusValid,
+    statusFinished,
     asyncErrorBoundary(update),
   ],
   modify: [
-    isValidReservation,
-    isNotOnTuesday,
-    isInTheFuture,
-    isWithinOpenHours,
+    reservationValid,
+    notTuesday,
+    futureDate,
+    restaurantOpen,
     asyncErrorBoundary(reservationExists),
-    hasBookedStatus,
+    statusBooked,
     asyncErrorBoundary(modify),
   ],
 };

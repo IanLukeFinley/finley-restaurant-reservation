@@ -1,15 +1,15 @@
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const service = require("./tables.service");
 
-const VALID_FIELDS = ["table_name", "capacity"];
+const TABLE_FIELDS = ["table_name", "capacity"];
 
-function isValidTable(req, res, next) {
+function validTableCheck(req, res, next) {
   const table = req.body.data;
   if (!table) {
-    return next({ status: 400, message: "Must have data property" });
+    return next({ status: 400, message: "Must have data" });
   }
 
-  VALID_FIELDS.forEach((field) => {
+  TABLE_FIELDS.forEach((field) => {
     if (!table[field]) {
       return next({ status: 400, message: `Must have ${field} property.` });
     }
@@ -47,6 +47,6 @@ async function create(req, res, next) {
 
 module.exports = {
   list: asyncErrorBoundary(list),
-  create: [isValidTable, asyncErrorBoundary(create)],
-  isValidTable,
+  create: [validTableCheck, asyncErrorBoundary(create)],
+  validTableCheck,
 };

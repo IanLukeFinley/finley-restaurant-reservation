@@ -1,4 +1,4 @@
-//shorter async error handler using async/await with a try/catch
+
 function asyncErrorBoundary(delegate, defaultStatus) {
     return async (req, res, next) => {
       try {

@@ -36,8 +36,8 @@ export default function Edit() {
     }
   };
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit(element) {
+    element.preventDefault();
     const ac = new AbortController();
     const errors = [];
     findErrors(reservationData, errors);
@@ -55,10 +55,10 @@ export default function Edit() {
     return () => ac.abort();
   }
 
-  const handleFormChange = (e) => {
+  const handleFormChange = (element) => {
     setReservationData({
       ...reservationData,
-      [e.target.name]: e.target.value,
+      [element.target.name]: element.target.value,
     });
   };
 

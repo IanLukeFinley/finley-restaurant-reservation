@@ -9,26 +9,26 @@ export default function Tables() {
   const [tableError, setTableError] = useState(null);
   const [tableForm, setTableForm] = useState({ ...initForm });
 
-  function handleFormChange(e) {
+  function handleFormChange(element) {
     setTableForm({
       ...tableForm,
-      [e.target.name]: e.target.value,
+      [element.target.name]: element.target.value,
     });
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    const c = new AbortController();
+  async function handleSubmit(element) {
+    element.preventDefault();
+    const ac = new AbortController();
     try {
       tableForm.capacity = Number(tableForm.capacity);
-      const response = await createTable(tableForm, c.signal);
+      const response = await createTable(tableForm, ac.signal);
       if (response) {
         history.push("/dashboard");
       }
     } catch (error) {
       setTableError(error);
     }
-    return () => c.abort();
+    return () => ac.abort();
   }
 
   function handleCancel() {
@@ -38,7 +38,7 @@ export default function Tables() {
   return (
     <>
       <div className="d-flex justify-content-center pt-3">
-        <h3>Create a New Table</h3>
+        <h3>Create New Table</h3>
       </div>
       <ErrorAlert error={tableError} />
       <form onSubmit={handleSubmit}>
