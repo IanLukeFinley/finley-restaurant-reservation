@@ -31,4 +31,4 @@ The `/dashboard` and the `/search` page have an “Edit” button that navigates
 
 ## Live at:
 
-Deployed via Heroku at: LIVE LINK HERE
+Deployed via Heroku at: https://finley-restaurant-frontend.herokuapp.com/dashboard
